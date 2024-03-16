@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
@@ -9,13 +10,27 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        textEditor = new TextEditor(); // Create an instance of TextEditor
+
         VBox root = new VBox();
         TextArea textArea = new TextArea();
-        textArea.setEditable(false); // Set to true for editing
+        textArea.setEditable(true); // Set to true for editing
         textArea.setWrapText(true);
 
-        // Bind the text area content to the content lines of the text editor
-        textArea.textProperty().bindBidirectional(textEditor.getContentLinesProperty());
+        // Update text area when content lines change
+        textEditor.getContentLinesProperty().addListener((ListChangeListener<String>) change -> {
+            StringBuilder sb = new StringBuilder();
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    for (String addedLine : change.getAddedSubList()) {
+                        sb.append(addedLine).append("\n");
+                    }
+                } else if (change.wasRemoved()) {
+                    // Handle removal if needed
+                }
+            }
+            textArea.setText(sb.toString());
+        });
 
         root.getChildren().add(textArea);
 
@@ -29,4 +44,3 @@ public class MainApp extends Application {
         launch(args);
     }
 }
-
