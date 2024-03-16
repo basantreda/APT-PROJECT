@@ -2,6 +2,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+// Document class represents a text document
+class Document {
+    private String documentName;
+    private String owner;
+    private HashMap<String, String> sharedUsers; // Username -> Permission (viewer/editor)
+
+    public Document(String documentName, String owner) {
+        this.documentName = documentName;
+        this.owner = owner;
+        this.sharedUsers = new HashMap<>();
+    }
+
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public HashMap<String, String> getSharedUsers() {
+        return sharedUsers;
+    }
+
+    public void shareDocument(String username, String permission) {
+        sharedUsers.put(username, permission);
+    }
+
+    public void unshareDocument(String username) {
+        sharedUsers.remove(username);
+    }
+}
+
+// DocumentManager class manages documents (creation, deletion, etc.)
 public class DocumentManager {
     private HashMap<String, Document> documents;
 
@@ -46,5 +80,26 @@ public class DocumentManager {
             }
         }
         return sharedDocuments;
+    }
+
+    public static void main(String[] args) {
+        DocumentManager manager = new DocumentManager();
+        manager.createDocument("Document1", "Alice");
+        manager.createDocument("Document2", "Bob");
+
+        List<Document> aliceDocuments = manager.getOwnedDocuments("Alice");
+        List<Document> bobDocuments = manager.getOwnedDocuments("Bob");
+
+        System.out.println("Alice's Documents:");
+        for (Document doc : aliceDocuments) {
+            System.out.println(doc.getDocumentName());
+        }
+
+        System.out.println("\nBob's Documents:");
+        for (Document doc : bobDocuments) {
+            System.out.println(doc.getDocumentName());
+        }
+
+        manager.deleteDocument("Document1", "Alice");
     }
 }
